@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.1'
+//    id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
@@ -8,39 +8,37 @@ repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
 }
-
-ext {
-    set('springCloudVersion', "2021.0.3")
-}
-
-bootJar.enabled = false
+//
+//ext {
+//    set('springCloudVersion', "2021.0.3")
+//}
 
 subprojects {
     group = 'com.cloud'
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = '11'
 
-    apply plugin: 'org.springframework.boot'
+//    apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
 
     repositories {
         mavenCentral()
     }
-
-    dependencies {
-        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-    }
+//
+//    dependencies {
+//        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+//        testImplementation 'org.springframework.boot:spring-boot-starter-test'-
+//    }
+//
+//    dependencyManagement {
+//        imports {
+//            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+//        }
+//    }
+//
+//    test {
+//        useJUnitPlatform()
+//    }
 }
 
