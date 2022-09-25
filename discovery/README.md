@@ -11,7 +11,7 @@ Spring Cloud에서 지원되는 Spring Boot의 버전이 별로도 존재하기 
 ## Eureka
 Eureka는 AWS와 같은 Cloud 시스템에서 서비스의 로드 밸런싱과 실패처리 등을 유연하게 가져가 위해 
 각 서비스들의 `IP` / `Port` / `InstanceId` 를 가지고 있는 REST 기반의 `미들웨어 서버`이다.
-Eureka는 마이크로 서비스 기반의 아키텍처의 핵심 원칙 중 하나인 Service Discovery의 역할을 수행합니다. 
+Eureka는 마이크로 서비스 기반의 아키텍처의 핵심 원칙 중 하나인 Service Discovery의 역할을 수행한다. 
 MSA에서는 Service의 `IP`와 `Port`가 `일정하지 않고 지속적을 변화한다.` 그렇기 때문에 Client에 Service의 정보를 수동으로 입력하는 것은 한계가 있다. 
 Service Discovery란 이런 MSA의 상황에 적합하다.
 
