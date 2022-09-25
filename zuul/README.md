@@ -27,10 +27,7 @@ statistics and metrics을 수집한다.
 
 위와 같이 요청이 들어면 `PRE Filter`를 실행하고, `ROUTING Filter` 에 의해 원하는 서버로 요청을 보낸다. 원하는 서버에서 응답이 오면 `POST Filter` 를 실행시킨다.
 
-## 참고
+## 출처
 https://techblog.woowahan.com/2523/    
 https://velog.io/@jkijki12/Zuul%EC%9D%B4%EB%9E%80    
 https://happycloud-lee.tistory.com/213
-
-
-
