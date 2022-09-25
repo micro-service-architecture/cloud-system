@@ -1,6 +1,6 @@
 # Discovery
 마이크로서비스 아키텍처(MSA)로 구성되어 있는 서비스들은 각자 다른 IP와 Port를 가지고 있다.
-이러한 서로 다른 서비스들의 IP와 Port 정보에 대해서 저장하고 관리할 필요가 있는데 이것을 Service `Discovery` 라고 한다.
+이러한 서로 다른 서비스들의 IP와 Port 정보에 대해서 저장하고 관리할 필요가 있는데 이것을 `Service Discovery` 라고 한다.
 
 ## Spring Cloud와 Spring Boot 호환성
 Spring Cloud에서 지원되는 Spring Boot의 버전이 별로도 존재하기 때문에 맞는 버전을 선택하여야 한다.
