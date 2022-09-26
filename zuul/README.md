@@ -17,7 +17,7 @@ MSA는 도메인별 데이터를 저장하고 도메인별로 하나 이상의 �
 
 ## Zuul Filter
 `Zuul Filter` 는 크게 4가지 `Filter` 로 나누어 진다.
-1. PRE Filter - 라우팅전에 실행되며 필터이다. 주로 `logging`, `인증` 등이 `pre Filter` 에서 이루어진다.
+1. PRE Filter - 라우팅전에 실행되는 필터이다. 주로 `logging`, `인증` 등이 `pre Filter` 에서 이루어진다.
 2. ROUTING Filter - 요청에 대한 라우팅을 다루는 필터이다. Apache httpclient 를 사용하여 정해진 `Url` 로 보낼 수 있고 `Netflix Ribbon` 을 사용하여 동적으로 라우팅할 수도 있다.
 3. POST Filter - 라우팅 후에 실행되는 필터이다. `response` 에 `HTTP header` 를 추가하거나, response 에 대한 `응답속도`, `Status Code` 등 응답에 대한 
 statistics and metrics을 수집한다.
