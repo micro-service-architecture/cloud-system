@@ -8,7 +8,7 @@ Microservice Architecture(이하 MSA)에서 언급되는 컴포넌트 중 하나
 한 서비스에 한개 이상의 서버가 존재하기 때문에 이 서비스를 사용하는 클라이언트 입장에서는 다수의 end point가 생기게 되며, end point를 변경이 일어났을때, 관리하기가 힘들다. 
 그래서 MSA 환경에서 서비스에 대한 도메인인 하나로 통합할 수 있는 것이 API Gateway 이다.
 
-## Gateway 시스템 구성하기
+## Spring Cloud Gateway 시스템 구성 예시
 ![image](https://user-images.githubusercontent.com/31242766/192293167-f4c85653-748c-46cc-aafe-c7c735eb8671.png)
 
 - `Gateway`   
@@ -26,11 +26,17 @@ Gateway 에 설정 정보를 동적으로 변경하기 위한 구성 요소
 - `Git`   
 Config-Server 가 읽을 yml 파일이 저장되는 저장소
 
+## Spring Cloud Gateway 동작 방식
+![image](https://user-images.githubusercontent.com/31242766/192300657-9cf5f6a2-5075-4e4d-88b5-8e76f824181e.png)
+
+클라이언트는 Spring Cloud Gateway 로 요청을 한다. `Gateway Handler Mapping` 이 `Route` 의 조건에 일치하는 요청이라고 판단하면, 해당 `Route` 로 보내준다.
+`Gateway Web Handler` 는 요청과 관련된 `Filter` 들을 통해 요청을 보낸다. `Filter` 는 요청의 기능에 따라 proxy 요청이 보내지기 전/후로 로직을 실행한다.
+
 ## Netty?
 Spring Cloud Gateway 는 `Tomcat` 이 아닌 `Netty` 를 사용한다. API Gateway 는 모든 요청이 통과하는 곳이기 때문에 성능적인 측면이 증요하여 기존이 `1Thread / 1Request` 방식인 
 Spring MVC 를 사용할 경우 성능적인 이슈가 발생할 수 있다. Netty 는 비동기 WAS 이고 `1Thread / Many Request` 방식이기 때문에 기존 방식보다 더 많은 요청을 처리할 수 있다. 
 
-![image](https://user-images.githubusercontent.com/31242766/192295963-9b4aad9e-7d46-4686-9daa-99db3d1971dc.png)
+![image](https://user-images.githubusercontent.com/31242766/192301502-ee77c546-224a-469f-ae6e-b58c2d378f54.png)
 
 ## Route? Predicates? Filters?
 Spring Cloud Gateway 에는 크게 3가지 구성 요소가 존재한다.
@@ -221,3 +227,7 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
     }
 }
 ```
+#### yml 파일 Route 및 Filter 흐름도
+![image](https://user-images.githubusercontent.com/31242766/192299716-ec24574a-0ddf-4be9-a5ea-cb2feec423aa.png)
+
+## Load Balancer
