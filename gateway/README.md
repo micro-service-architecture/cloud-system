@@ -231,3 +231,7 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
 ![image](https://user-images.githubusercontent.com/31242766/192299716-ec24574a-0ddf-4be9-a5ea-cb2feec423aa.png)
 
 ## Load Balancer
+
+## 출처
+https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
+https://ooeunz.tistory.com/109
