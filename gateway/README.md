@@ -32,3 +32,192 @@ Spring MVC 를 사용할 경우 성능적인 이슈가 발생할 수 있다. Net
 
 ![image](https://user-images.githubusercontent.com/31242766/192295963-9b4aad9e-7d46-4686-9daa-99db3d1971dc.png)
 
+## Route? Predicates? Filters?
+Spring Cloud Gateway 에는 크게 3가지 구성 요소가 존재한다.
+### Route
+고유ID, 목적지 URI, Predicate, Filter 로 구성된 구성요소이다. Gateway 로 요청된 Url 의 조건이 참인 경우 매핑된 해당 경로로 매칭을 시켜준다.
+### Predicate
+주어진 요청이 주어진 조건을 충족하는지 테스트하는 구성요소이다. 각 요청 경로에 대해 충족하게 되는 경우 하나 이상의 조건자를 정의할 수 있다. 만약 Predicate 에 매칭되지 않는다면
+`HTTP 404 not found` 를 응답한다.
+### Filter
+Gateway 기준으로 들어오는 요청 및 나가는 응답에 대하여 수정을 가능하게 해주는 구성요소이다.
+
+### Java DSL Route 및 Filter 설정 예시
+```java
+@Configuration
+public class FilterConfiguration {
+
+    @Bean
+    public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route(r -> r.path("/first-service/**")
+                        .filters(f -> f.addRequestHeader("first-request", "first-request-header")
+                                .addResponseHeader("first-response", "first-response-header"))
+                        .uri("http://localhost:8081"))
+                .route(r -> r.path("/second-service/**")
+                        .filters(f -> f.addRequestHeader("second-request", "second-request-header")
+                                .addResponseHeader("second-response", "second-response-header"))
+                        .uri("http://localhost:8082"))
+                .build();
+    }
+}
+```
+### yml 파일 Route 및 Filter 설정 예시
+```yml
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: first-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/first-service/**
+          filters:
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter
+        - id: second-service
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/second-service/**
+          filters:
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
+```
+- first-service : [localhost:8081](https://github.com/multi-module-project/cloud-service/tree/master/boot-first-service)   
+- second-service : [localhost:8082](https://github.com/multi-module-project/cloud-service/tree/master/boot-second-service)
+
+#### GlobalFilter
+```java
+@Component
+@Slf4j
+public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
+
+    public GlobalFilter() {
+        super(GlobalFilter.Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        // Global Pre Filter
+        return (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpResponse response = exchange.getResponse();
+
+            log.info("Global Filter baseMessage : {}", config.getBaseMessage());
+
+            if(config.isPreLogger()) {
+                log.info("Global Filter Start : {}", request.getId());
+            }
+            // Global Post Filter
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                if(config.isPostLogger()) {
+                    log.info("Global Filter End : response code -> {}", response.getStatusCode());
+                }
+            }));
+        };
+    }
+
+    @Data
+    public static class Config {
+        private String baseMessage;
+        private boolean preLogger;
+        private boolean postLogger;
+    }
+}
+```
+#### CustomFilter
+```java
+@Component
+@Slf4j
+public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Config> {
+
+    public CustomFilter() {
+        super(Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        // Custom Pre Filter
+        return (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpResponse response = exchange.getResponse();
+
+            log.info("Custom PRE filter : request id -> {}", request.getId());
+
+            /**
+             * Custom Post Filter
+             * 기존의 스프링에서 MVC 패턴을 이용해서 ServletRequest, ServletResponse 객체들을 이용하여
+             * 웹 프로그래밍 작업을 진행했지만 Spring 5.0 에서 도입된 WebFlux 라는 기능을 사용하면
+             * ServletRequest, ServletResponse 을 지원하지 않는다. 그래서 이것을 사용하도록 도와주는 것이
+             * ServerWebExchange 객체이다.
+             *
+             * Mono 라는 객체는 Spring 5.0에서 도입된 WebFlux 기능이다.
+             * 기존의 동기 방식의 서버가 아니라 비동기 방식의 서버를 지원할때 단일값 전달할 때 Mono 타입으로
+             * 전달하여 사용한다.
+             */
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                log.info("Custom POST filter: response code -> {}", response.getStatusCode());
+            }));
+        };
+    }
+
+    public static class Config {
+        // Put the configuration properties
+    }
+}
+```
+#### LoggingFilter
+```java
+@Component
+@Slf4j
+public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Config> {
+
+    public LoggingFilter() {
+        super(LoggingFilter.Config.class);
+    }
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        GatewayFilter filter = new OrderedGatewayFilter((exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpResponse response = exchange.getResponse();
+
+            log.info("Logging Filter baseMessage : {}", config.getBaseMessage());
+
+            if(config.isPreLogger()) {
+                log.info("Logging PRE Filter Start : {}", request.getId());
+            }
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                if(config.isPostLogger()) {
+                    log.info("Logging POST Filter End : response code -> {}", response.getStatusCode());
+                }
+            }));
+            // Ordered.HIGHEST_PRECEDENCE : 가장 우선순위
+            // LOWEST_PRECEDENCE : 가장 낮은순위
+        }, Ordered.LOWEST_PRECEDENCE);
+        return filter;
+    }
+
+    @Data
+    public static class Config {
+        private String baseMessage;
+        private boolean preLogger;
+        private boolean postLogger;
+    }
+}
+```
