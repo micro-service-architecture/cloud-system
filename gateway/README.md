@@ -231,6 +231,72 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
 ![image](https://user-images.githubusercontent.com/31242766/192299716-ec24574a-0ddf-4be9-a5ea-cb2feec423aa.png)
 
 ## Load Balancer
+부하분산 또는 로드 밸런싱은 컴퓨터 네트워크의 일종으로 중앙처리장치 혹은 저장장치와 같은 컴퓨터 자원들에게 작업을 나누는 것을 의미한다. 서버에 가해지는 부하(=로드)를 분산(=밸런싱)해주는 장치 또는 기술이다. 사업의 규모가 확장되고 클라이언트의 수가 늘어나게 되면 기존 서버만으로는 정상적인 서비스가 불가능하게 되는데, 이런 증가한 트래픽에 대처할 수 있는 방법은 크게 두 가지이다.
+
+- `Scale-up` : Server가 더 빠르게 동작하기 위해 하드웨어의 성능을 올리는 방법.
+- `Scale-out` : 하나의 Server 보다는 여러 대의 Server가 나눠서 일을 하는 방법.
+
+### Scale-out의 장점
+- 하드웨어 향상하는 비용보다 서버 한대 추가 비용이 적다.
+- 여러 대의 Server 덕분에 무중단 서비스를 제공할 수 있다.
+
+여러 대의 Server에게 균등하게 트래픽을 분산시켜주는 역할을 하는 것이 `Load Balancer` 이다.
+
+### 종류
+#### L2
+Mac 주소를 바탕으로 Load Balancing 한다.
+- Mac 주소란? 이더넷 하드웨어 주소라고도 하며 대부분의 네트워크 어댑터(랜카드 등)에 들어가 있는 고유 식별자이다.
+#### L3
+IP주소를 바탕으로 Load Balancing 한다.
+#### L4
+- Transport Layer(IP와 Port) Level에서 Load Balancing을 한다.
+- TCP, UDP
+#### L7
+- Application Layer(사용자의 Request) Level에서 Load Balancing을 한다.
+- URL 또는 HTTP 헤더에서 부하 분산이 가능하다.
+- HTTP, HTTPS, FTP
+#### HTTP
+![image](https://user-images.githubusercontent.com/31242766/193258565-6494fb55-190d-44b9-8a33-f569f5ad9a27.png)
+
+- `X-Forwarded-For` : HTTP 또는 HTTPS 로드 밸런서를 사용할 때 클라이언트의 IP 주소를 식별하는 데 도움을 준다.
+- `X-Forwarded-Proto` : 클라이언트가 로드 밸런서 연결에 사용한 프로토콜(HTTP 또는 HTTPS)을 식별하는 데 도움을 준다.
+- `X-Forwarded-Port` : 클라이언트가 로드 밸런서 연결에 사용한 포트를 식별하는 데 도움을 준다.
+
+#### Load Balancer 선택 기준
+- `Round Robin` : 단순히 Round Robin으로 분산하는 방식이다.
+  - Round Robin이란? 클라이언트로부터 받은 요청을 로드밸런싱 대상 서버에 순서대로 할당받는 방식이다. 첫 번째 요청은 첫 번째 서버, 두 번째 요청은 두 번째 서버, 세 번째 요청은 세 번째 서버에 할당합니다. 로드밸러닝 대상 서버의 성능이 동일하고 처리 시간이 짧은 애플리케이션의 경우, 균등하게 분산이 이루어지기 때문에 이 방식을 사용한다.
+- `Least Connections` : 연결 수가 가장 적은 서버에 네트워크 연결방향을 정합니다. 동적인 분산 알고리즘으로 각 서버에 대한 현재 연결 수를 동적으로 카운트할 수 있고, 동적으로 변하는 요청에 대한 부하를 분산시킬 수 있습니다.
+
+### 서비스별 uri 를 통한 Load Balancing
+서비스별 uri 를 `lb://{SpringBoot Application 이름}` 으로 변경해주면 로드 밸런싱이 적용된다.
+
+![image](https://user-images.githubusercontent.com/31242766/193260555-c1fb8012-3093-40fb-a867-a722891d3999.png)
+
+```yml
+   ...
+      routes:
+        - id: first-service
+          uri: lb://MY-FIRST-SERVICE
+          predicates:
+            - Path=/first-service/**
+          filters:
+#            - AddRequestHeader=first-request, first-request-header2
+#            - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter
+        - id: second-service
+          uri: lb://MY-SECOND-SERVICE
+          predicates:
+            - Path=/second-service/**
+          filters:
+#            - AddRequestHeader=second-request, second-request-header2
+#            - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
+```
 
 ## 출처
 https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
