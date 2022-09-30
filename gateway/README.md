@@ -300,4 +300,7 @@ IP주소를 바탕으로 Load Balancing 한다.
 
 ## 출처
 https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
-https://ooeunz.tistory.com/109
+https://ooeunz.tistory.com/109    
+https://nesoy.github.io/articles/2018-06/Load-Balancer    
+https://dev.classmethod.jp/articles/load-balancing-types-and-algorithm/    
+
