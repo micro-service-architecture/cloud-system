@@ -273,33 +273,35 @@ IP주소를 바탕으로 Load Balancing 한다.
 ![image](https://user-images.githubusercontent.com/31242766/193260555-c1fb8012-3093-40fb-a867-a722891d3999.png)
 
 ```yml
-   ...
-      routes:
-        - id: first-service
-          uri: lb://MY-FIRST-SERVICE
-          predicates:
-            - Path=/first-service/**
-          filters:
-#            - AddRequestHeader=first-request, first-request-header2
-#            - AddResponseHeader=first-response, first-response-header2
-            - CustomFilter
-        - id: second-service
-          uri: lb://MY-SECOND-SERVICE
-          predicates:
-            - Path=/second-service/**
-          filters:
-#            - AddRequestHeader=second-request, second-request-header2
-#            - AddResponseHeader=second-response, second-response-header2
-            - name: CustomFilter
-            - name: LoggingFilter
-              args:
-                baseMessage: Hi, there.
-                preLogger: true
-                postLogger: true
+  ...
+  routes:
+    - id: first-service
+      uri: lb://MY-FIRST-SERVICE
+      predicates:
+        - Path=/first-service/**
+      filters:
+#       - AddRequestHeader=first-request, first-request-header2
+#       - AddResponseHeader=first-response, first-response-header2
+        - CustomFilter
+    - id: second-service
+      uri: lb://MY-SECOND-SERVICE
+      predicates:
+        - Path=/second-service/**
+      filters:
+#       - AddRequestHeader=second-request, second-request-header2
+#       - AddResponseHeader=second-response, second-response-header2
+        - name: CustomFilter
+        - name: LoggingFilter
+          args:
+            baseMessage: Hi, there.
+            preLogger: true
+            postLogger: true
+  ...
 ```
 
 ### Routes 정보 변경
 ```yml
+  ...
   routes:
 #   - id: user-service
 #     uri: lb://USER-SERVICE
@@ -330,6 +332,7 @@ IP주소를 바탕으로 Load Balancing 한다.
         - RemoveRequestHeader=Cookie
         - RewritePath=/user-service/(?<segment>.*), /${segment}
         - AuthorizationHeaderFilter
+  ...
 ```
 #### RemoveRequestHeader
 GET, POST를 구분하지 않고, Request 헤더에 저장된 값을 제거하기 위해서 해당 코드를 추가한다.
