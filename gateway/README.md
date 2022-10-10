@@ -298,6 +298,48 @@ IP주소를 바탕으로 Load Balancing 한다.
                 postLogger: true
 ```
 
+### Routes 정보 변경
+```yml
+  routes:
+#   - id: user-service
+#     uri: lb://USER-SERVICE
+#     predicates:
+#       - Path=/user-service/**
+    - id: user-service
+      uri: lb://USER-SERVICE
+      predicates:
+        - Path=/user-service/login
+        - Method=POST
+      filters:
+        - RemoveRequestHeader=Cookie
+        - RewritePath=/user-service/(?<segment>.*), /${segment}
+    - id: user-service
+      uri: lb://USER-SERVICE
+      predicates:
+        - Path=/user-service/users
+        - Method=POST
+      filters:
+        - RemoveRequestHeader=Cookie
+        - RewritePath=/user-service/(?<segment>.*), /${segment}
+    - id: user-service
+      uri: lb://USER-SERVICE
+      predicates:
+        - Path=/user-service/**
+        - Method=GET
+      filters:
+        - RemoveRequestHeader=Cookie
+        - RewritePath=/user-service/(?<segment>.*), /${segment}
+        - AuthorizationHeaderFilter
+```
+#### RemoveRequestHeader
+GET, POST를 구분하지 않고, Request 헤더에 저장된 값을 제거하기 위해서 해당 코드를 추가한다.
+
+![image](https://user-images.githubusercontent.com/31242766/194877882-40541752-16b6-4c77-8631-c757383bca5a.png)
+
+#### RewritePath
+RewritePath는 강제로 Path를 다시 작성한다.
+
+
 ## 출처
 https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
 https://ooeunz.tistory.com/109    
