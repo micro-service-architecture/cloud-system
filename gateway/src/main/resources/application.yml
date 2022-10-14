@@ -81,3 +81,9 @@ spring:
 
 token:
   secret: comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageToken
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
