@@ -8,6 +8,10 @@ Zuul은 내부적으로 `Eureka 서버`를 사용하고, `부하 분산` 을 위
 
 ![image](https://user-images.githubusercontent.com/31242766/192134632-79fc686e-a285-4740-ada1-1e4391db9754.png)
 
+## 목차
+* **[API Gateway](#API-Gateway)**
+* **[Zuul Filter](#Zuul-Filter)**
+
 ## API Gateway
 Microservice Architecture(이하 MSA)에서 언급되는 컴포넌트 중 하나이며, 모든 클라이언트 요청에 대한 end point를 통합하는 서버이다. 마치 프록시 서버처럼 동작한다. 
 그리고 인증 및 권한, 모니터링, logging 등 추가적인 기능이 있다. 모든 비지니스 로직이 하나의 서버에 존재하는 Monolithic Architecture와 달리 
