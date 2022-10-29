@@ -1,6 +1,27 @@
 # Spring Cloud Gateway
 Spring Cloud Gateway 는 API Gateway로써 사용자의 요청을 받고 적절한 마이크로서비스에 라우팅해주는 서버이다.
 
+## 목차
+* **[API Gateway](#API-Gateway)**
+* **[Spring Cloud Gateway 시스템 구성 예시](#Spring-Cloud-Gateway-시스템-구성-예시)**
+* **[Spring Cloud Gateway 동작 방식](#Spring-Cloud-Gateway-동작-방식)**
+* **[Netty?](#Netty?)**
+* **[Route? Predicates? Filters?](#Route?-Predicates?-Filters?)**
+    * **[Route](#Route)**
+    * **[Predicate](#Predicate)**
+    * **[Filter](#Filter)**
+    * **[Java DSL Route 및 Filter 설정 예시](#Java-DSL-Route-및-Filter-설정-예시)**
+    * **[yml 파일 Route 및 Filter 설정 예시](#yml-파일-Route-및-Filter-설정-예시)**
+        * **[GlobalFilter](#GlobalFilter)**
+        * **[CustomFilter](#CustomFilter)**
+        * **[LoggingFilter](#LoggingFilter)**
+        * **[yml 파일 Route 및 Filter 흐름도](#yml-파일-Route-및-Filter-흐름도)**
+* **[Load Balancer](#Load-Balancer)**
+    * **[Scale-out의 장점](#Scale-out의-장점)**
+    * **[종류](#종류)**
+    * **[Load Balancer 선택 기준](#Load-Balancer-선택-기준)**
+    * **[서비스별 uri 를 통한 Load Balancing](#서비스별-uri-를-통한-Load-Balancing)**
+
 ## API Gateway
 Microservice Architecture(이하 MSA)에서 언급되는 컴포넌트 중 하나이며, 모든 클라이언트 요청에 대한 end point를 통합하는 서버이다. 
 마치 프록시 서버처럼 동작한다. 그리고 인증 및 권한, 모니터링, logging 등 추가적인 기능이 있다. 
@@ -262,7 +283,7 @@ IP주소를 바탕으로 Load Balancing 한다.
 - `X-Forwarded-Proto` : 클라이언트가 로드 밸런서 연결에 사용한 프로토콜(HTTP 또는 HTTPS)을 식별하는 데 도움을 준다.
 - `X-Forwarded-Port` : 클라이언트가 로드 밸런서 연결에 사용한 포트를 식별하는 데 도움을 준다.
 
-#### Load Balancer 선택 기준
+### Load Balancer 선택 기준
 - `Round Robin` : 단순히 Round Robin으로 분산하는 방식이다.
   - Round Robin이란? 클라이언트로부터 받은 요청을 로드밸런싱 대상 서버에 순서대로 할당받는 방식이다. 첫 번째 요청은 첫 번째 서버, 두 번째 요청은 두 번째 서버, 세 번째 요청은 세 번째 서버에 할당합니다. 로드밸러닝 대상 서버의 성능이 동일하고 처리 시간이 짧은 애플리케이션의 경우, 균등하게 분산이 이루어지기 때문에 이 방식을 사용한다.
 - `Least Connections` : 연결 수가 가장 적은 서버에 네트워크 연결방향을 정합니다. 동적인 분산 알고리즘으로 각 서버에 대한 현재 연결 수를 동적으로 카운트할 수 있고, 동적으로 변하는 요청에 대한 부하를 분산시킬 수 있습니다.
@@ -299,7 +320,7 @@ IP주소를 바탕으로 Load Balancing 한다.
   ...
 ```
 
-### Routes 정보 변경
+#### Routes 정보 변경
 ```yml
   ...
   routes:
