@@ -96,6 +96,31 @@ eureka:
 
 ## 애플리케이션 배포 구성
 ### DiscoveryService 배포
+#### Dockerfile 생성
+```docker
+FROM openjdk:17-ea-11-jdk-slim
+VOLUME /tmp
+COPY build/libs/discovery-0.0.1-SNAPSHOT.jar DiscoveryService.jar
+ENTRYPOINT ["java", "-jar", "DiscoveryService.jar"]
+```
+#### 도커 파일 빌드
+```docker
+docker build --tag yong7317/discovery-service:1.0 .
+```
+#### docker hub 사이트에 업로드
+```docker
+docker push yong7317/discovery-service:1.0
+```
+![image](https://user-images.githubusercontent.com/31242766/205313378-287b8ebe-6b0f-4610-b968-9cab8d05f5f5.png)
+
+#### docker hub 사이트에 있는 도커 이미지 다운로드
+```docker
+docker pull yong7317/discovery-service:1.0
+```
+#### 도커 파일 실행
+```docker
+docker run -d -p 8761:8761 --network ecommerce-network -e "spring.cloud.config.uri=http://config-service:8888" --name discovery-service yong7317/discovery service:1.0
+```
 
 ## 출처
 https://yarisong.tistory.com/41?category=1010312    
