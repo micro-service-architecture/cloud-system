@@ -21,6 +21,8 @@ Spring Cloud Gateway 는 API Gateway로써 사용자의 요청을 받고 적절�
     * **[종류](#종류)**
     * **[Load Balancer 선택 기준](#Load-Balancer-선택-기준)**
     * **[서비스별 uri 를 통한 Load Balancing](#서비스별-uri-를-통한-Load-Balancing)**
+* **[애플리케이션 배포 구성](#애플리케이션-배포-구성)**
+    * **[ApigatewayService 배포](#ApigatewayService-배포)**
 
 ## API Gateway
 Microservice Architecture(이하 MSA)에서 언급되는 컴포넌트 중 하나이며, 모든 클라이언트 요청에 대한 end point를 통합하는 서버이다. 
@@ -363,6 +365,8 @@ GET, POST를 구분하지 않고, Request 헤더에 저장된 값을 제거하�
 #### RewritePath
 RewritePath는 강제로 Path를 다시 작성한다.
 
+## 애플리케이션 배포 구성
+### ApigatewayService 배포
 
 ## 출처
 https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
