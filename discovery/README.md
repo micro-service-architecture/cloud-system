@@ -8,6 +8,8 @@
     * **[Eureka Server](#Eureka-Server)**
     * **[Eureka Client](#Eureka-Client)**
         * **[Random Port 지정 및 서비스를 구분하는 방법](#Random-Port-지정-및-서비스를-구분하는-방법)**
+* **[애플리케이션 배포 구성](#애플리케이션-배포-구성)**
+    * **[DiscoveryService 배포](#DiscoveryService-배포)**
 
 ## Spring Cloud와 Spring Boot 호환성
 Spring Cloud에서 지원되는 Spring Boot의 버전이 별로도 존재하기 때문에 맞는 버전을 선택하여야 한다.
@@ -91,6 +93,9 @@ eureka:
 작동 확인
 
 ![image](https://user-images.githubusercontent.com/31242766/192144599-7a8042be-db31-4acb-91be-d7844e256593.png)
+
+## 애플리케이션 배포 구성
+### DiscoveryService 배포
 
 ## 출처
 https://yarisong.tistory.com/41?category=1010312    
