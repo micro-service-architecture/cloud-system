@@ -119,7 +119,7 @@ docker pull yong7317/discovery-service:1.0
 ```
 #### 도커 파일 실행
 ```docker
-docker run -d -p 8761:8761 --network ecommerce-network -e "spring.cloud.config.uri=http://config-service:8888" --name discovery-service yong7317/discovery service:1.0
+docker run -d -p 8761:8761 --network ecommerce-network -e "spring.cloud.config.uri=http://config-service:8888" --name discovery-service yong7317/discovery-service:1.0
 ```
 
 ## 출처
