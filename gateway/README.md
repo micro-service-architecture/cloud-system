@@ -367,6 +367,26 @@ RewritePath는 강제로 Path를 다시 작성한다.
 
 ## 애플리케이션 배포 구성
 ### ApigatewayService 배포
+#### Dockerfile 생성
+```docker
+FROM openjdk:17-ea-11-jdk-slim
+VOLUME /tmp
+COPY build/libs/gateway-0.0.1-SNAPSHOT.jar ApigatewayService.jar
+ENTRYPOINT ["java", "-jar", "ApigatewayService.jar"]
+```
+#### 도커 파일 빌드
+```docker
+docker build -t yong7317/apigateway-service:1.0 .
+```
+#### docker hub 사이트에 업로드
+```docker
+docker push yong7317/apigateway-service:1.0
+```
+
+#### 도커 파일 실행
+```docker
+docker run -d -p 8000:8000 --network ecommerce-network -e "spring.cloud.config.uri=http://config-service:8888" -e "spring.rabbitmq.host=rabbitmq" -e "eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/" --name apigateway-service yong7317/apigateway-service:1.0
+```
 
 ## 출처
 https://saramin.github.io/2022-01-20-spring-cloud-gateway-api-gateway/   
